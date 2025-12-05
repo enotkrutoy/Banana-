@@ -6,11 +6,22 @@
     <title>Nano Banana Image Workflow</title>
     <script>
       (function() {
-        // Theme configuration via environment variable placeholder
-        // Defaults to 'dark' if the variable is not replaced during build
-        const envTheme = '%VITE_THEME%';
-        const theme = (envTheme && !envTheme.startsWith('%')) ? envTheme : 'dark';
+        // Robust theme configuration handling both Vite and generic build replacements
+        // 1. Try Vite placeholder
+        const viteEnv = '%VITE_THEME%';
+        // 2. Try Next.js/Generic placeholder
+        const nextEnv = '%NEXT_PUBLIC_THEME%';
         
+        let theme = 'dark'; // Default
+
+        // Check if placeholders were replaced
+        if (viteEnv && !viteEnv.startsWith('%')) {
+          theme = viteEnv;
+        } else if (nextEnv && !nextEnv.startsWith('%')) {
+          theme = nextEnv;
+        }
+
+        // Apply theme
         if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
           document.documentElement.classList.add('dark');
         } else {
